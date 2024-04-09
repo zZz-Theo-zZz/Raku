@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Raku.cpp">
+    <ClCompile Include="src\Raku.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
