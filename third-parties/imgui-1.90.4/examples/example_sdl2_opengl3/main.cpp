@@ -8,8 +8,8 @@
 // - Introduction, links and more at the top of imgui.cpp
 
 #include "imgui.h"
-#include "backends/imgui_impl_sdl2.h"
-#include "backends/imgui_impl_opengl3.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_opengl3.h"
 #include <stdio.h>
 #include <SDL.h>
 #if defined(IMGUI_IMPL_OPENGL_ES2)

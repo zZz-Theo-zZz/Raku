@@ -20,6 +20,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Raku.cpp" />
+    <ClCompile Include="third-parties\imgui-1.90.4\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="third-parties\imgui-1.90.4\backends\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="third-parties\imgui-1.90.4\imgui.cpp" />
+    <ClCompile Include="third-parties\imgui-1.90.4\imgui_demo.cpp" />
+    <ClCompile Include="third-parties\imgui-1.90.4\imgui_draw.cpp" />
+    <ClCompile Include="third-parties\imgui-1.90.4\imgui_tables.cpp" />
+    <ClCompile Include="third-parties\imgui-1.90.4\imgui_widgets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="third-parties\imgui-1.90.4\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="third-parties\imgui-1.90.4\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="third-parties\imgui-1.90.4\backends\imgui_impl_sdl2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="third-parties\imgui-1.90.4\misc\debuggers\imgui.natstepfilter" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="third-parties\imgui-1.90.4\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -75,19 +93,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExternalIncludePath>third-parties\SDL\headers;$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>D:\Dev\Raku\third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\include;$(IncludePath)</IncludePath>
+    <IncludePath>third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\include;third-parties\imgui-1.90.4;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
-    <IncludePath>D:\Dev\Raku\third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\include;$(IncludePath)</IncludePath>
+    <IncludePath>third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\include;third-parties\imgui-1.90.4;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
-    <IncludePath>D:\Dev\Raku\third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\include;$(IncludePath)</IncludePath>
+    <IncludePath>third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\include;third-parties\imgui-1.90.4;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
-    <IncludePath>D:\Dev\Raku\third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\include;$(IncludePath)</IncludePath>
+    <IncludePath>third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\include;third-parties\imgui-1.90.4;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -137,7 +155,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\Dev\Raku\third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <ShowProgress>NotSet</ShowProgress>
@@ -158,7 +176,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\Dev\Raku\third-parties\SDL2-devel-2.30.2-VC\SDL2-2.30.2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <ShowProgress>NotSet</ShowProgress>
