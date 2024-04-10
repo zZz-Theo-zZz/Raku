@@ -7,11 +7,15 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
+#include <algorithm>
+#include <stdio.h>
+#include <SDL.h>
+#include <SDL_syswm.h>
+#include "bgfx/bgfx.h"
+#include "bgfx/platform.h"
 #include "imgui.h"
 #include "backends/imgui_impl_sdl2.h"
 #include "backends/imgui_impl_opengl3.h"
-#include <stdio.h>
-#include <SDL.h>
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
 #else
@@ -22,6 +26,9 @@
 #ifdef __EMSCRIPTEN__
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
+
+const int WindowWidth = 1200;
+const int WindowHeight = 700;
 
 // Main code
 int main(int, char**)
@@ -67,7 +74,7 @@ int main(int, char**)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
     if (window == nullptr)
     {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
@@ -110,10 +117,36 @@ int main(int, char**)
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != nullptr);
 
+    // Setup bgfx
+    bgfx::Init init;
+    SDL_SysWMinfo windowSysInfo;
+
+    SDL_VERSION(&windowSysInfo.version);
+    SDL_GetWindowWMInfo(window, &windowSysInfo);
+
+    init.platformData.nwh = windowSysInfo.info.win.window;
+    init.type = bgfx::RendererType::Count;
+    init.resolution.width = WindowWidth;
+    init.resolution.height = WindowHeight;
+    init.resolution.reset = BGFX_RESET_VSYNC;
+    
+    bgfx::renderFrame();
+
+    if (!bgfx::init(init))
+        return 1;
+
+    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
+    bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
+
+
     // Our state
     bool show_demo_window = true;
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    int width;
+    int height;
+    SDL_GetWindowSize(window, &width, &height);
 
     // Main loop
     bool done = false;
@@ -139,6 +172,15 @@ int main(int, char**)
                 done = true;
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
                 done = true;
+        }
+
+        int oldWidth = width, oldHeight = height;
+
+        SDL_GetWindowSize(window, &width, &height);
+
+        if (width != oldWidth || height != oldHeight) {
+            bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
+            bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
         }
 
         // Start the Dear ImGui frame
@@ -188,7 +230,26 @@ int main(int, char**)
         glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // This dummy draw call is here to make sure that view 0 is cleared if no other draw calls are submitted to view 0.
+        bgfx::touch(0);
+        // Use debug font to print information about this example.
+        bgfx::dbgTextClear();
+        bgfx::dbgTextPrintf(0, 0, 0x0f, "Press F1 to toggle stats.");
+        bgfx::dbgTextPrintf(0, 1, 0x0f, "Color can be changed with ANSI \x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");
+        bgfx::dbgTextPrintf(80, 1, 0x0f, "\x1b[;0m    \x1b[;1m    \x1b[; 2m    \x1b[; 3m    \x1b[; 4m    \x1b[; 5m    \x1b[; 6m    \x1b[; 7m    \x1b[0m");
+        bgfx::dbgTextPrintf(80, 2, 0x0f, "\x1b[;8m    \x1b[;9m    \x1b[;10m    \x1b[;11m    \x1b[;12m    \x1b[;13m    \x1b[;14m    \x1b[;15m    \x1b[0m");
+        const bgfx::Stats* stats = bgfx::getStats();
+        bgfx::dbgTextPrintf(0, 2, 0x0f, "Backbuffer %dW x %dH in pixels, debug text %dW x %dH in characters.", stats->width, stats->height, stats->textWidth, stats->textHeight);
+        
+        // Enable stats or debug text.
+        bgfx::setDebug(BGFX_DEBUG_STATS);
+        //// Advance to next frame. Process submitted rendering primitives.
+        bgfx::frame();
+
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         SDL_GL_SwapWindow(window);
     }
 #ifdef __EMSCRIPTEN__
