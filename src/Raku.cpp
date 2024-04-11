@@ -16,6 +16,8 @@
 #include "imgui.h"
 #include "backends/imgui_impl_sdl2.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "imgui_impl_bgfx.h"
+
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
 #else
@@ -99,6 +101,7 @@ int main(int, char**)
     // Setup Platform/Renderer backends
     ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
     ImGui_ImplOpenGL3_Init(glsl_version);
+    ImGui_Implbgfx_Init(0);
 
     // Load Fonts
     // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
@@ -186,6 +189,7 @@ int main(int, char**)
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame();
+        ImGui_Implbgfx_NewFrame();
         ImGui::NewFrame();
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
@@ -249,6 +253,7 @@ int main(int, char**)
 
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());
 
         SDL_GL_SwapWindow(window);
     }
@@ -257,6 +262,7 @@ int main(int, char**)
 #endif
 
     // Cleanup
+    ImGui_Implbgfx_Shutdown();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
